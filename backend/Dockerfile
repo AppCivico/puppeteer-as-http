@@ -29,7 +29,7 @@ COPY . /app/
 
 RUN npm i
 
-RUN chown -R node:node /app/src
+RUN chown -R node:node /app
 
 # Run everything after as non-privileged user.
 USER node
