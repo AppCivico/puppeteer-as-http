@@ -1,0 +1,6 @@
+
+.git
+devonly*
+*Dockerfile*
+*docker-compose*
+node_modules
