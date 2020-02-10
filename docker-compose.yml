@@ -3,12 +3,15 @@ version: '2'
 services:
   backend:
     build: backend
+    environment:
+        - SECRET_TOKEN=testing
     expose:
      - 3000
   nginx:
     image: nginx:latest
     container_name: puppeteer_nginx
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
+        - ./nginx.conf:/etc/nginx/nginx.conf
+        - /tmp/nginx-cache:/data/nginx-cache
     ports:
       - 30666:80
