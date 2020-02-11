@@ -6,8 +6,6 @@ services:
     restart: unless-stopped
     environment:
         - SECRET_TOKEN=${BACKEND_SECRET_TOKEN}
-    expose:
-     - 3000
     logging:
        driver: "json-file"
        options:
