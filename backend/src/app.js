@@ -6,6 +6,7 @@ var morgan = require('morgan')
 const puppeteer = require('puppeteer');
 
 let env_secret = process.env.SECRET_TOKEN;
+console.log("SECRET_TOKEN=" + env_secret);
 
 let browser
 
@@ -18,17 +19,12 @@ var app = express();
 app.set('port', port);
 
 app.use(morgan(':method :url (:status) :response-time ms'));
-
-app.get('/gen404', async (req, res, next) => {
-    res.status(404);
-    return res.json({ message: 'gen404' });
-});
 app.get('/live', async (req, res, next) => {
     res.writeHead(200, [
         ['Content-Type', 'appplication/json'],
         ['Cache-Control', 'Cache-Control:max-age=0'],
     ]);
-    res.end('new Buffer(buffer)')
+    res.end('up')
 
 });
 
