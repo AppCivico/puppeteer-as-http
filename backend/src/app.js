@@ -28,7 +28,7 @@ app.get('/live', async (req, res, next) => {
 
 });
 
-app.get('/', async (req, res, next) => {
+app.get('/i.jpg', async (req, res, next) => {
 
     let width = req.query.w || req.query.width,
         height = req.query.h || req.query.height,

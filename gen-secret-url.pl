@@ -4,21 +4,21 @@ use Digest::MD5 qw/md5_hex/;
 
 my $host = $ARGV[0];
 my %config;
-$config{url}    = $ARGV[1];
-$config{width}  = $ARGV[2];
-$config{height} = $ARGV[3];
+$config{u} = $ARGV[1];    #url
+$config{w} = $ARGV[2];    #width
+$config{h} = $ARGV[3];    #height
 
 my $secret = $ENV{BACKEND_SECRET_TOKEN} || $ARGV[-1];
 
 die 'missing BACKEND_SECRET_TOKEN' if !$secret || $secret =~ /^\d+$/;
-die 'invalid width' if $config{width} !~ /^\d+$/;
-die 'invalid height' if $config{height} !~ /^\d+$/;
+die 'invalid width'                if $config{w}      !~ /^\d+$/;
+die 'invalid height'               if $config{h}     !~ /^\d+$/;
 
 my $my_url = Mojo::URL->new($host);
 
 my $calcBuffer = $secret . "\n";
 
-for my $field (qw/url width height/) {
+for my $field (qw/u w h/) {
     $calcBuffer .= $field . '=' . $config{$field} . "\n";
     $my_url->query->merge($field, $config{$field});
 }
@@ -31,4 +31,4 @@ $my_url->query->merge('a', $calcSecret);
 
 
 use DDP;
-p $my_url.'';
+p $my_url. '';
