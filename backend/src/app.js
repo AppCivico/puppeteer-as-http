@@ -30,16 +30,16 @@ app.get('/live', async (req, res, next) => {
 
 app.get('/', async (req, res, next) => {
 
-    let width = req.query.width,
-        height = req.query.height,
-        website = req.query.url,
-        deviceScaleFactor = req.query.deviceScaleFactor || 1,
-        providedSecret = req.query.secret;
+    let width = req.query.w || req.query.width,
+        height = req.query.h || req.query.height,
+        website = req.query.u || req.query.url,
+        deviceScaleFactor = req.query.dsf || req.query.deviceScaleFactor || 1,
+        providedSecret = req.query.a || req.query.secret;
 
     let calcBuffer = env_secret + "\n";
 
     Object.keys(req.query).forEach(function (element, key) {
-        if (element !== 'secret') {
+        if (element !== 'a' && element !== 'secret') {
             calcBuffer += element + '=' + req.query[element] + "\n";
         }
     });
