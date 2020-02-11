@@ -19,6 +19,19 @@ app.set('port', port);
 
 app.use(morgan(':method :url (:status) :response-time ms'));
 
+app.get('/gen404', async (req, res, next) => {
+    res.status(404);
+    return res.json({ message: 'gen404' });
+});
+app.get('/live', async (req, res, next) => {
+    res.writeHead(200, [
+        ['Content-Type', 'appplication/json'],
+        ['Cache-Control', 'Cache-Control:max-age=0'],
+    ]);
+    res.end('new Buffer(buffer)')
+
+});
+
 app.get('/', async (req, res, next) => {
 
     let width = req.query.width,
@@ -37,20 +50,20 @@ app.get('/', async (req, res, next) => {
 
     let calcSecret = md5(calcBuffer);
     if (providedSecret !== calcSecret && env_secret !== 'testing') {
-        res.status(400);
+        res.status(422);
         return res.json({ message: 'secret not match' });
     }
 
     if (isNaN(width) || width < 180 || width > 5120) {
-        res.status(400);
+        res.status(422);
         return res.json({ message: 'please make sure the width is numeric and greater than 180 and less than 5120' });
     }
     if (isNaN(height) || height < 180 || height > 5120) {
-        res.status(400);
+        res.status(422);
         return res.json({ message: 'please make sure the height is numeric and greater than 180 and less than 5120' });
     }
     if (!url.isUri(website)) {
-        res.status(400);
+        res.status(422);
         return res.json({ message: 'please make sure the url is valid' });
     }
 
@@ -72,7 +85,11 @@ app.get('/', async (req, res, next) => {
             type: 'jpeg',
             quality: 90,
         }).then(async (buffer) => {
-            res.writeHead(200, [['Content-Type', 'image/jpeg']]);
+            res.writeHead(200, [
+                ['Content-Type', 'image/jpeg'],
+                ['Cache-Control', 'Cache-Control:max-age=2629743'],
+            ]);
+
             res.end(new Buffer(buffer));
         });
 

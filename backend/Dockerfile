@@ -25,6 +25,8 @@ RUN chmod +x /usr/local/bin/dumb-init
 
 WORKDIR app
 
+RUN npm i puppeteer express md5 morgan nodemon valid-url
+
 COPY . /app/
 
 RUN npm i
