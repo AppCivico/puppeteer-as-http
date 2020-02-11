@@ -8,6 +8,11 @@ services:
         - SECRET_TOKEN=testing
     expose:
      - 3000
+    logging:
+       driver: "json-file"
+       options:
+         max-size: "10m"
+         max-file: "10"
   nginx:
     image: nginx:latest
     restart: unless-stopped
@@ -17,3 +22,8 @@ services:
         - /tmp/nginx-cache:/data/nginx-cache
     ports:
       - 30666:80
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "10"
