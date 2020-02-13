@@ -19,7 +19,9 @@ my $my_url = Mojo::URL->new($host);
 
 my $calcBuffer = $secret . "\n";
 
-for my $field (qw/u w h rw/) {
+$config{fp}=1;
+$config{ms}=1;
+for my $field (qw/u w h rw fp ms/) {
     $calcBuffer .= $field . '=' . $config{$field} . "\n";
     $my_url->query->merge($field, $config{$field});
 }

@@ -88,7 +88,6 @@ app.get('/i.jpg', async (req, res, next) => {
         });
 
         await page.goto(website, { waitUntil: 'networkidle2' });
-        await setTimeout(() => { }, 1000);
 
         console.log(`${website} loaded`);
 
