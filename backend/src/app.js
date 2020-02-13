@@ -54,23 +54,22 @@ app.get('/i.jpg', async (req, res, next) => {
         return res.json({ message: 'secret not match' });
     }
 
-    if (isNaN(width) || width < 180 || width > 5120) {
+    if (isNaN(width) || Number.parseFloat(width) < 180 || Number.parseFloat(width) > 5120) {
         res.status(422);
         return res.json({ message: 'please make sure the width is numeric and greater than 180 and less than 5120' });
     }
 
-    if (!height) height = width * 1.5;
-    if (isNaN(height) || height < 180 || height > 9999) {
+    if (!height) height = Number.parseFloat(width) * 1.5;
+    if (isNaN(height) || Number.parseFloat(height) < 180 || Number.parseFloat(height) > 9999) {
         res.status(422);
         return res.json({ message: 'please make sure the height is numeric and greater than 180 and less than 9999' });
     }
 
     if (isNaN(waitMs)) waitMs = 0;
 
-    console.log(rwidth);
-    if (rwidth !== null && (rwidth < 50 || rwidth > width)) {
+    if (rwidth !== null && ( Number.parseFloat(rwidth) < 50 || Number.parseFloat(rwidth) > Number.parseFloat(width))) {
         res.status(422);
-        return res.json({ message: 'please make sure the resize width is numeric and greater than 50 and less than width' });
+        return res.json({ message: `please make sure the resize width ${rwidth} is numeric and greater than 50 and less than ${width}}` });
     }
 
     if (!url.isUri(website)) {

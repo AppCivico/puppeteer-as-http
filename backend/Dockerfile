@@ -31,6 +31,8 @@ RUN apt-get update \
 
 WORKDIR app
 
+RUN chown node:node /app -R
+
 # Run everything after as non-privileged user.
 USER node
 
