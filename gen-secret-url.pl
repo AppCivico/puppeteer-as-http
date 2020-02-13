@@ -7,6 +7,7 @@ my %config;
 $config{u} = $ARGV[1];    #url
 $config{w} = $ARGV[2];    #width
 $config{h} = $ARGV[3];    #height
+$config{rw} = $ARGV[4];    #resize width
 
 my $secret = $ENV{BACKEND_SECRET_TOKEN} || $ARGV[-1];
 
@@ -18,10 +19,11 @@ my $my_url = Mojo::URL->new($host);
 
 my $calcBuffer = $secret . "\n";
 
-for my $field (qw/u w h/) {
+for my $field (qw/u w h rw/) {
     $calcBuffer .= $field . '=' . $config{$field} . "\n";
     $my_url->query->merge($field, $config{$field});
 }
+
 
 use DDP;
 p $calcBuffer;
