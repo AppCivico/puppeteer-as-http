@@ -67,7 +67,7 @@ app.get('/i.jpg', async (req, res, next) => {
 
     if (isNaN(waitMs)) waitMs = 0;
 
-    if (rwidth !== null && ( Number.parseFloat(rwidth) < 50 || Number.parseFloat(rwidth) > Number.parseFloat(width))) {
+    if (rwidth !== null && (Number.parseFloat(rwidth) < 50 || Number.parseFloat(rwidth) > Number.parseFloat(width))) {
         res.status(422);
         return res.json({ message: `please make sure the resize width ${rwidth} is numeric and greater than 50 and less than ${width}}` });
     }
@@ -92,22 +92,26 @@ app.get('/i.jpg', async (req, res, next) => {
 
         console.log(`${website} loaded`);
 
+        let screenshotConfig = {
+            type: rwidth ? 'png' : 'jpeg',
+            fullPage: fullPage,
+        };
+
+        if (screenshotConfig.type === 'jpeg') screenshotConfig['quality'] = 92;
+
         setTimeout(() => {
-            page.screenshot({
-                type: rwidth ? 'png' : 'jpeg',
-                fullPage: fullPage,
-            }).then(async (buffer) => {
+            page.screenshot(screenshotConfig).then(async (buffer) => {
 
 
                 if (rwidth) {
                     console.log(`resizing image to ${rwidth}...`);
 
                     gm(buffer, 'img.png')
-                        .colorspace('RGB')
+                        .quality(92)
+                        .filter('Box')
                         .resize(rwidth)
-                        .filter('Catrom')
-                        .unsharp('0x0.75', '0.75', '0.008')
-                        .colorspace('sRGB')
+                        .interlace('Line')
+                        .noProfile()
                         .toBuffer('jpg', function (err, resized_buffer) {
                             if (err) {
                                 res.writeHead(200, [
