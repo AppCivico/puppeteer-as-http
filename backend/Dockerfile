@@ -23,18 +23,22 @@ RUN apt-get update && apt-get install -y wget --no-install-recommends \
 ADD dumb-init_1.2.0_amd64 /usr/local/bin/dumb-init
 RUN chmod +x /usr/local/bin/dumb-init
 
+RUN apt-get update \
+    && apt-get install -y imagemagick \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get purge \
+    && rm -rf /src/*.deb
+
 WORKDIR app
+
+# Run everything after as non-privileged user.
+USER node
 
 RUN npm i puppeteer express md5 morgan nodemon valid-url
 
 COPY . /app/
 
 RUN npm i
-
-RUN chown -R node:node /app
-
-# Run everything after as non-privileged user.
-USER node
 
 EXPOSE 3000
 ENTRYPOINT ["dumb-init", "--"]

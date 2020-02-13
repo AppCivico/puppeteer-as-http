@@ -4,6 +4,7 @@ var md5 = require('md5');
 var morgan = require('morgan')
 
 const puppeteer = require('puppeteer');
+const gm = require('gm').subClass({ imageMagick: true });
 
 let env_secret = process.env.SECRET_TOKEN;
 console.log("SECRET_TOKEN=" + env_secret);
@@ -34,7 +35,10 @@ app.get('/i.jpg', async (req, res, next) => {
         height = req.query.h || req.query.height,
         website = req.query.u || req.query.url,
         deviceScaleFactor = req.query.dsf || req.query.deviceScaleFactor || 1,
-        providedSecret = req.query.a || req.query.secret;
+        providedSecret = req.query.a || req.query.secret,
+        fullPage = req.query.fp ? true : false,
+        rwidth = req.query.rw || req.query.resize_width || null,
+        waitMs = req.query.ms || req.query.wait_ms;
 
     let calcBuffer = env_secret + "\n";
 
@@ -54,10 +58,21 @@ app.get('/i.jpg', async (req, res, next) => {
         res.status(422);
         return res.json({ message: 'please make sure the width is numeric and greater than 180 and less than 5120' });
     }
-    if (isNaN(height) || height < 180 || height > 5120) {
+
+    if (!height) height = width * 1.5;
+    if (isNaN(height) || height < 180 || height > 9999) {
         res.status(422);
-        return res.json({ message: 'please make sure the height is numeric and greater than 180 and less than 5120' });
+        return res.json({ message: 'please make sure the height is numeric and greater than 180 and less than 9999' });
     }
+
+    if (isNaN(waitMs)) waitMs = 0;
+
+    console.log(rwidth);
+    if (rwidth !== null && (rwidth < 50 || rwidth > width)) {
+        res.status(422);
+        return res.json({ message: 'please make sure the resize width is numeric and greater than 50 and less than width' });
+    }
+
     if (!url.isUri(website)) {
         res.status(422);
         return res.json({ message: 'please make sure the url is valid' });
@@ -74,20 +89,52 @@ app.get('/i.jpg', async (req, res, next) => {
         });
 
         await page.goto(website, { waitUntil: 'networkidle2' });
+        await setTimeout(() => { }, 1000);
 
         console.log(`${website} loaded`);
 
-        page.screenshot({
-            type: 'jpeg',
-            quality: 90,
-        }).then(async (buffer) => {
-            res.writeHead(200, [
-                ['Content-Type', 'image/jpeg'],
-                ['Cache-Control', 'Cache-Control:max-age=2629743'],
-            ]);
+        setTimeout(() => {
+            page.screenshot({
+                type: rwidth ? 'png' : 'jpeg',
+                fullPage: fullPage,
+            }).then(async (buffer) => {
 
-            res.end(new Buffer(buffer));
-        });
+
+                if (rwidth) {
+                    console.log(`resizing image to ${rwidth}...`);
+
+                    gm(buffer, 'img.png')
+                        .colorspace('RGB')
+                        .resize(rwidth)
+                        .filter('Catrom')
+                        .unsharp('0x0.75', '0.75', '0.008')
+                        .colorspace('sRGB')
+                        .toBuffer('jpg', function (err, resized_buffer) {
+                            if (err) {
+                                res.writeHead(200, [
+                                    ['Content-Type', 'plain/text'],
+                                ]);
+                                return res.end(err);
+                            }
+
+                            res.writeHead(200, [
+                                ['Content-Type', 'image/jpeg'],
+                                ['Cache-Control', 'Cache-Control:max-age=2629743'],
+                            ]);
+                            res.end(resized_buffer)
+                        })
+
+                } else {
+                    res.writeHead(200, [
+                        ['Content-Type', 'image/jpeg'],
+                        ['Cache-Control', 'Cache-Control:max-age=2629743'],
+                    ]);
+                    res.end(buffer);
+
+                }
+
+            });
+        }, Number.parseInt(waitMs, 10));
 
     } catch (error) {
         // Passes errors into the error handler
