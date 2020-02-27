@@ -100,7 +100,7 @@ app.get('/i.jpg', async (req, res, next) => {
 
         setTimeout(() => {
             page.screenshot(screenshotConfig).then(async (buffer) => {
-
+                await page.close();
 
                 if (rwidth) {
                     console.log(`resizing image to ${rwidth}...`);
@@ -139,6 +139,7 @@ app.get('/i.jpg', async (req, res, next) => {
         }, Number.parseInt(waitMs, 10));
 
     } catch (error) {
+        await page.close();
         // Passes errors into the error handler
         return next(error)
     }
