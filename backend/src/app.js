@@ -87,7 +87,7 @@ app.get('/i.jpg', async (req, res, next) => {
             height: Number.parseInt(height, 10),
         });
 
-        await page.goto(website, { waitUntil: 'networkidle2' });
+        await page.goto(website, { waitUntil: 'networkidle0' });
 
         console.log(`${website} loaded`);
 
@@ -153,7 +153,7 @@ puppeteer.launch({
         '--no-sandbox',
         '--disable-setuid-sandbox',
         // This will write shared memory files into /tmp instead of /dev/shm,
-        // because Dockerâ€™s default for /dev/shm is 64MB
+        // because Docker’s default for /dev/shm is 64MB
         '--disable-dev-shm-usage'
     ]
 }).then(async function (the_browser) {
