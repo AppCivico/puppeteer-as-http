@@ -13,7 +13,7 @@ Edit `.env` to change the default values:
     BACKEND_SECRET_TOKEN=testing
     NGINX_DATA_DIR=/tmp/nginx-cache
 
-> Note: edit `proxy_cache_path` on `nginx.conf` to change the configured *10GB* cache size.
+> Note: edit `proxy_cache_path` on `nginx.conf` to change the configured **10GB** cache size.
 
 # backend/src/app.js
 
@@ -41,6 +41,8 @@ It has a `/i.jpg` endpoint that returns the image.
     3. Make sure it's encoded as UTF-8 string, convert it to bytes and then convert it into MD5 as hex
 
     use the md5 hex as `a` parameter
+
+    The generated url should have the same order as used to generate the signature (except `a/secret`). No new parameters should be included.
 
 # Signing an URL using gen-secret-url.pl
 
